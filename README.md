@@ -8,7 +8,7 @@ This project is a starting point for a Flutter application.
 
 ### Introduction:
 
-- Project is A Todo App Advanced used local storage with Bloc state management 
+- Project is A Task from The Spark foundation used local storage with Bloc state management 
 
 #### Packages :
 
