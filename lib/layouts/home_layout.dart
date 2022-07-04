@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todoapp/shared/cubit/cubit.dart';
 import 'package:todoapp/shared/cubit/states.dart';
+import '../modules/view_customers/view_customers.dart';
+import '../modules/view_transfers/view_transfers.dart';
 import '../shared/components/components.dart';
 import 'package:sizer/sizer.dart';
 
@@ -67,8 +69,8 @@ class HomeLayout extends StatelessWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        defaultButton(buttonWidth: 85.w,buttonHeight: 8.h, background: primaryColor!, function: (){}, text: 'View Customers',isUpperCase: true,radius: 50,FontSize: 20.sp,),
-                        defaultButton(buttonWidth: 85.w,buttonHeight: 8.h, background: primaryColor!, function: (){}, text: 'View Transfers',isUpperCase: true,radius: 50,FontSize: 20.sp,)
+                        defaultButton(buttonWidth: 85.w,buttonHeight: 8.h, background: primaryColor!, function: (){navigateTo(context, CustomersScreen());}, text: 'View Customers',isUpperCase: true,radius: 50,FontSize: 20.sp,),
+                        defaultButton(buttonWidth: 85.w,buttonHeight: 8.h, background: primaryColor!, function: (){navigateTo(context, ViewTransferScreen());}, text: 'View Transfers',isUpperCase: true,radius: 50,FontSize: 20.sp,)
                       ],
                     ))
                   ],

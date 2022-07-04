@@ -1,12 +1,17 @@
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todoapp/modules/add_customer/add_customer.dart';
 import 'package:todoapp/modules/view_customers/view_customers.dart';
 import 'package:todoapp/shared/components/bloc_observer.dart';
 import 'package:todoapp/shared/cubit/cubit.dart';
 import 'package:sizer/sizer.dart';
 import 'layouts/home_layout.dart';
 import 'package:device_preview/device_preview.dart';
+
+import 'modules/transfer_screen/transfer_screen.dart';
+import 'modules/view_transfers/view_transfers.dart';
 
 void main() {
   BlocOverrides.runZoned(
@@ -36,10 +41,8 @@ class MyApp extends StatelessWidget
   {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-          create:(context)=>AppCubit(),
-        ),
-      ],
+        BlocProvider(create: (BuildContext context)=> AppCubit()..createDatabase())
+    ],
       child: Sizer(
           builder: (context, orientation, deviceType) {
             return MaterialApp(
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget
               theme: ThemeData(
                 fontFamily: 'Jannah',
               ),
-              home: CustomersScreen(),
+              home: HomeLayout(),
             );
           }
       )

@@ -10,28 +10,24 @@ class AppCubit extends Cubit<AppStates>{
   static AppCubit get(context)=> BlocProvider.of(context);
   late Database database;
   List<Map> Customers=[];
-
-
-
-  // Method change index to Bottom Nav Bar
-
-
+  List<Map> Transfer=[];
 
 // Method create database
   void createDatabase()  {
     openDatabase(
-      'todo.db', //Name of file for dataBase
+      'customers.db', //Name of file for dataBase
       version: 1,
       onCreate: (database, version) {
         database
             .execute(
-            'CREATE TABLE tasks (id INTEGER PRIMARY KEY,title TEXT,date TEXT,time TEXT,status TEXT )')
+            'CREATE TABLE customers (id INTEGER PRIMARY KEY,name TEXT,bank_id TEXT,money TEXT)')
             .then((value) => {
           print("Table created"),
         })
             .catchError((error) {
           print("error${error.toString()}");
         });
+        database.execute('CREATE TABLE transfer (id INTEGER PRIMARY KEY,bank_id TEXT,money TEXT)').then((value) => print("Successfully created"));
       },
       onOpen: (database) {
         getDataFromDatabase(database);
@@ -46,16 +42,35 @@ class AppCubit extends Cubit<AppStates>{
   //Method to insert data to Data Base
 
   insertToDatabase({
-    required String title,
-    required String time,
-    required String date,
+    required String name,
+    required String bank_id,
+    required String money,
   }) async {
     await database.transaction((txn) async {
       txn.rawInsert(
-          'INSERT INTO tasks(title,time,date,status) VALUES("$title", "$time", "$date","new")')
+          'INSERT INTO customers(name,bank_id,money) VALUES("$name", "$bank_id","$money")')
           .then((value) => {
         emit(AppInsertDatabaseState()),
       getDataFromDatabase(database)
+      }).catchError((error) {
+        print('Error : ${error.toString()}');
+      });
+      return null;
+    });
+  }
+
+  //Method to record transfers
+
+  insertToTransfers({
+    required String bank_id,
+    required String money,
+  }) async {
+    await database.transaction((txn) async {
+      txn.rawInsert(
+          'INSERT INTO transfer(bank_id,money) VALUES("$bank_id","$money")')
+          .then((value) => {
+        emit(AppInsertToTransferDatabaseState()),
+        getDataFromDatabase(database)
       }).catchError((error) {
         print('Error : ${error.toString()}');
       });
@@ -70,58 +85,43 @@ class AppCubit extends Cubit<AppStates>{
 
 
     emit(AppGetDatabaseLoadingState());
-     database.rawQuery('SELECT * FROM tasks').then((value) => {
+     database.rawQuery('SELECT * FROM customers').then((value) => {
+       Customers=[],
       value.forEach((element){
-        if(element['status']=='new'){
-        }
-     if(element['status']=='done'){
-      // doneTasks.add(element);
-     }
-     else{
-       // archiveTasks.add(element);
-     }
+        Customers.add(element);
       }),
        emit(AppGetDatabaseState()),
      });
   }
+  void getDataTransferFromDatabase(database)  {
+    emit(AppGetDatabaseLoadingState());
+    database.rawQuery('SELECT * FROM transfer').then((value) => {
+      Transfer=[],
+      value.forEach((element){
+        Transfer.add(element);
+      }),
+      emit(AppGetDatabaseState()),
+    });
+  }
 
   void updateData({
-    required String status,
+    required String money,
     required int id,
   }) async
   {
     database.rawUpdate(
-      'UPDATE tasks SET status = ? WHERE id = ?',
-      ['$status', id],
+      'UPDATE customers SET money = ? WHERE id = ?',
+      ['$money', id],
     ).then((value)
     {
       getDataFromDatabase(database);
-      emit(AppUpdateDatabaseState());
-    });
-  }
-
-  void deleteData({
-    required int id,
-  }) async
-  {
-    database.rawDelete('DELETE FROM tasks WHERE id = ?', [id])
-        .then((value)
-    {
-      getDataFromDatabase(database);
+      getDataTransferFromDatabase(database);
       emit(AppUpdateDatabaseState());
     });
   }
 
 
-  bool isBottomSheetShown = false;
-  IconData fabIcon = Icons.edit;
 
-  void changeBottomSheetState({
-  required bool isShow,
-    required IconData icon,
-}){
-    isBottomSheetShown = isShow;
-    fabIcon = icon;
-    emit(AppChangeBottomSheetState());
-  }
+
+
 }

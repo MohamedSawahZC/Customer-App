@@ -9,39 +9,37 @@ import '../../shared/components/components.dart';
 import '../../shared/cubit/cubit.dart';
 
 
-class CustomersScreen extends StatelessWidget {
+class ViewTransferScreen extends StatelessWidget {
+ List<Map> transfer=[
+  {
+   "bank_id":"2803923",
+   "money":"100"
+ },
+   {
+     "bank_id":"2803923",
+     "money":"100"
+   },
+   {
+     "bank_id":"2803923",
+     "money":"100"
+   },
+ ];
   @override
   Widget build(BuildContext context) {
+    AppCubit cubit = AppCubit.get(context);
     return BlocConsumer<AppCubit, AppStates>(
       listener: (context, state) {},
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: AppBar(
+            centerTitle: true,
+            title: Text('Transfers',style: TextStyle(color: primaryColor,fontSize: 20.sp),),
             backgroundColor: Colors.transparent,
             elevation: 0.0,
-            actions: [
-              Center(
-                child: defaultButton(
-                  buttonWidth: 95.w,
-                  buttonHeight: 6.h,
-                  background: primaryColor!,
-                  function: () {
-                    navigateTo(context, AddCustomer());
-                  },
-                  text: '+ Add Customer',
-                  isUpperCase: true,
-                  radius: 10,
-                  FontSize: 16.sp,
-                ),
-              ),
-              SizedBox(
-                width: 1.w,
-              ),
-            ],
           ),
-          body: customersBuilder(customers: AppCubit.get(context).Customers),
-        );
+          body: TansferBuilder(transfers: cubit.Transfer));
+
       },
     );
   }

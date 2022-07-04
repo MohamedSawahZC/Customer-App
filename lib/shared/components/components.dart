@@ -4,6 +4,8 @@ import 'package:todoapp/shared/components/constants.dart';
 import 'package:todoapp/shared/cubit/cubit.dart';
 import 'package:sizer/sizer.dart';
 
+import '../../modules/transfer_screen/transfer_screen.dart';
+
 Widget defaultFormField({
   required TextEditingController controller,
   required TextInputType type,
@@ -46,114 +48,6 @@ Widget defaultFormField({
 
 //Build Task item here
 
-Widget buildTaskItem(Map model, context) => Dismissible(
-      key: Key(model['id'].toString()),
-      onDismissed: (direction) {
-        AppCubit.get(context).deleteData(id: model['id']);
-      },
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Row(
-          children: [
-            CircleAvatar(
-              radius: 40,
-              child: Text(
-                "${model['time']}",
-                style: TextStyle(fontSize: 13),
-              ),
-            ),
-            SizedBox(
-              width: 20.0,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "${model['title']}",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25,
-                    ),
-                  ),
-                  Text(
-                    "${model['date']}",
-                    style: TextStyle(
-                      color: Colors.grey,
-                    ),
-                  )
-                ],
-              ),
-            ),
-            SizedBox(
-              width: 20.0,
-            ),
-            IconButton(
-              onPressed: () {
-                AppCubit.get(context)
-                    .updateData(status: 'done', id: model['id']);
-              },
-              icon: Icon(
-                Icons.check_box,
-                color: Colors.green,
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                AppCubit.get(context)
-                    .updateData(status: 'archive', id: model['id']);
-              },
-              icon: Icon(
-                Icons.archive,
-                color: Colors.black45,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-
-Widget tasksBuilder({
-  required List<Map> tasks,
-}) =>
-    ConditionalBuilder(
-      condition: tasks.length > 0,
-      builder: (context) => ListView.separated(
-        itemBuilder: (context, index) => buildTaskItem(tasks[index], context),
-        separatorBuilder: (context, index) => Padding(
-          padding: EdgeInsetsDirectional.only(
-            start: 20.0,
-          ),
-          child: Container(
-            width: double.infinity,
-            height: 1,
-            color: Colors.grey[300],
-          ),
-        ),
-        itemCount: tasks.length,
-      ),
-      fallback: (context) => Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.menu,
-              size: 100,
-              color: Colors.grey,
-            ),
-            Text(
-              'No Tasks Yet, Please Add Some Tasks',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
 Widget myDivider() => Padding(
       padding: const EdgeInsetsDirectional.only(
         start: 20.0,
@@ -223,6 +117,7 @@ class ModTextFormField extends StatelessWidget {
   final Color? filledColor;
   final Color? inputColor;
   final bool isSecure;
+  final bool enabled;
   final int lineHeight;
   final double? borderRadius;
   final double hintFontSize;
@@ -235,6 +130,7 @@ class ModTextFormField extends StatelessWidget {
     this.inputColor,
     this.width,
     this.height,
+    required this.enabled,
     this.borderRadius,
     this.prefixWidget,
     this.suffixWidget,
@@ -254,7 +150,7 @@ class ModTextFormField extends StatelessWidget {
     return SizedBox(
       width: width,
       child: TextFormField(
-        enabled: false,
+        enabled: enabled,
         onFieldSubmitted: (String? value) {
           return onSubmit!(value);
         },
@@ -425,12 +321,12 @@ class ModTextFormField2 extends StatelessWidget {
 class CustomerCard extends StatelessWidget {
   var nameController = TextEditingController();
   var bankIdController = TextEditingController();
- Map model;
- VoidCallback function;
- CustomerCard({
-   required this.model,
+  Map model;
+  VoidCallback function;
+  CustomerCard({
+    required this.model,
     required this.function,
-}) ;
+  });
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -461,10 +357,11 @@ class CustomerCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     ModTextFormField(
+                      enabled: false,
                       width: 55.w,
                       height: 5.h,
                       hintFontSize: 14.sp,
-                      hintText:'${model['name']}',
+                      hintText: '${model['name']}',
                       onSubmit: (value) {},
                       validateTextField: (String? val) {},
                       inputColor: Colors.white,
@@ -483,6 +380,7 @@ class CustomerCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     ModTextFormField(
+                      enabled: false,
                       hintFontSize: 14.sp,
                       width: 55.w,
                       height: 5.h,
@@ -541,36 +439,149 @@ class CustomerCard extends StatelessWidget {
 
 Widget customersBuilder({
   required List<Map> customers,
-})=>ConditionalBuilder(
-  condition: customers.length>0,
-  builder: (context)=>Padding(
-    padding: EdgeInsets.all(20),
-    child: ListView.separated(
-      itemBuilder: (context,index)=>CustomerCard(function: (){
-        print('This Work');
-      },model:customers[index]),
-      separatorBuilder: (context,index)=>myDivider(),
-      itemCount: customers.length,
-    ),
-  ),
-  fallback: (context)=>Center(
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.menu,
-          size: 100,
-          color: Colors.grey,
+}) =>
+    ConditionalBuilder(
+      condition: customers.length > 0,
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(20),
+        child: ListView.separated(
+          itemBuilder: (context, index) => CustomerCard(
+              function: () {
+                navigateTo(
+                    context,
+                    TransferScreen(
+                      model: customers[index],
+                    ));
+              },
+              model: customers[index]),
+          separatorBuilder: (context, index) => myDivider(),
+          itemCount: customers.length,
         ),
-        Text(
-          'No Customers Yet, Please Add Some Customers',
-          style: TextStyle(
-            fontSize: 16,
-            color: Colors.grey,
-            fontWeight: FontWeight.bold,
+      ),
+      fallback: (context) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.menu,
+              size: 100,
+              color: Colors.grey,
+            ),
+            Text(
+              'No Customers Yet, Please Add Some Customers',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+void navigateTo(context, widget) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => widget,
+    ),
+  );
+}
+
+class TransferItem extends StatelessWidget {
+  Map model;
+  TransferItem({
+    required this.model,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    'Bank Id',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  ModTextFormField(
+                    enabled: false,
+                    hintText: '${model['bank_id']}',
+                    width: 50.w,
+                    height: 2.h,
+                    hintFontSize: 10.sp,
+                    borderRadius: 2,
+                    filledColor: primaryColor,
+                  )
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    'Money',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  ModTextFormField(
+                    enabled: false,
+                    hintText: '${model['money']}\$',
+                    width: 30.w,
+                    height: 2.h,
+                    hintFontSize: 10.sp,
+                    borderRadius: 2,
+                    filledColor: primaryColor,
+                  )
+                ],
+              ),
+            ],
           ),
         ),
-      ],
-    ),
-  ),
-);
+      ),
+    );
+  }
+}
+
+Widget TansferBuilder({
+  required List<Map> transfers,
+}) =>
+    ConditionalBuilder(
+      condition: transfers.length > 0,
+      builder: (context) => Padding(
+        padding: EdgeInsets.all(20),
+        child: ListView.separated(
+          itemBuilder: (context, index) => TransferItem(
+              model: transfers[index]),
+          separatorBuilder: (context, index) => myDivider(),
+          itemCount: transfers.length,
+        ),
+      ),
+      fallback: (context) => Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.menu,
+              size: 100,
+              color: Colors.grey,
+            ),
+            Text(
+              'No Transfers Yet, Please Do Some Transfers',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
