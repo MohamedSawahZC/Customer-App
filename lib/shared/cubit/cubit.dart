@@ -31,6 +31,7 @@ class AppCubit extends Cubit<AppStates>{
       },
       onOpen: (database) {
         getDataFromDatabase(database);
+        getDataTransferFromDatabase(database);
       },
     ).then((value) => {
       database = value,
