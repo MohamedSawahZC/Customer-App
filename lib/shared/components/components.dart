@@ -253,7 +253,6 @@ class ModTextFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: width,
-      height: height,
       child: TextFormField(
         enabled: false,
         onFieldSubmitted: (String? value) {
@@ -270,8 +269,8 @@ class ModTextFormField extends StatelessWidget {
         decoration: InputDecoration(
           floatingLabelBehavior: FloatingLabelBehavior.always,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 15,
+            horizontal: 0,
+            vertical: 0,
           ),
           errorStyle: const TextStyle(
             fontSize: 16,
