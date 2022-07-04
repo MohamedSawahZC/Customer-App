@@ -1,4 +1,4 @@
-# Todo App
+# Customer
 
 A new Flutter project.
 
@@ -15,7 +15,6 @@ This project is a starting point for a Flutter application.
 
 -  cupertino_icons: ^1.0.2
 - sqflite: ^2.0.2
-- intl: ^0.17.0
 - conditional_builder_null_safety: ^0.0.6
 - flutter_bloc: ^8.0.1
 - bloc: ^8.0.3

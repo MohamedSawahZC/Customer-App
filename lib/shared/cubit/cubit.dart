@@ -10,15 +10,8 @@ class AppCubit extends Cubit<AppStates>{
   static AppCubit get(context)=> BlocProvider.of(context);
   late Database database;
   List<Map> Customers=[];
-  List<Map> doneTasks=[];
-  List<Map> archiveTasks=[];
 
-  List<String> titles = [
-    //
-    'New Task',
-    'Done Tasks',
-    'Archived Tasks',
-  ];
+
 
   // Method change index to Bottom Nav Bar
 
@@ -74,8 +67,7 @@ class AppCubit extends Cubit<AppStates>{
 
 
   void getDataFromDatabase(database)  {
-    doneTasks=[];
-    archiveTasks=[];
+
 
     emit(AppGetDatabaseLoadingState());
      database.rawQuery('SELECT * FROM tasks').then((value) => {
@@ -83,10 +75,10 @@ class AppCubit extends Cubit<AppStates>{
         if(element['status']=='new'){
         }
      if(element['status']=='done'){
-       doneTasks.add(element);
+      // doneTasks.add(element);
      }
      else{
-       archiveTasks.add(element);
+       // archiveTasks.add(element);
      }
       }),
        emit(AppGetDatabaseState()),

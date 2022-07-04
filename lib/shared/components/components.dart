@@ -216,6 +216,7 @@ class ModTextFormField extends StatelessWidget {
   final Widget? suffixWidget;
   final Color borderColor;
   final TextEditingController? textFieldController;
+  final String? hintText;
   final Function? suffixTap;
   final Function? validateTextField;
   final Function? onSubmit;
@@ -230,6 +231,7 @@ class ModTextFormField extends StatelessWidget {
 
   const ModTextFormField({
     Key? key,
+    this.hintText,
     this.inputColor,
     this.width,
     this.height,
@@ -257,9 +259,9 @@ class ModTextFormField extends StatelessWidget {
         onFieldSubmitted: (String? value) {
           return onSubmit!(value);
         },
-        textAlignVertical: TextAlignVertical.center,
+        textAlign: TextAlign.center,
+        //textAlignVertical: TextAlignVertical.center,
         style: TextStyle(
-          height: 2,
           color: inputColor,
         ),
         controller: textFieldController,
@@ -276,6 +278,12 @@ class ModTextFormField extends StatelessWidget {
           ),
           filled: true,
           fillColor: filledColor,
+          hintText: hintText,
+          hintStyle: TextStyle(
+            fontSize: hintFontSize,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
           prefixIcon: prefixWidget,
           suffixIcon: suffixWidget,
           border: OutlineInputBorder(
@@ -416,14 +424,12 @@ class ModTextFormField2 extends StatelessWidget {
 }
 
 class CustomerCard extends StatelessWidget {
- final TextEditingController? nameController;
- final TextEditingController? bankIdController;
- final double? money;
+  var nameController = TextEditingController();
+  var bankIdController = TextEditingController();
+ Map model;
  VoidCallback function;
  CustomerCard({
-   required this.money,
-   this.nameController,
-    this.bankIdController,
+   required this.model,
     required this.function,
 }) ;
   @override
@@ -456,9 +462,10 @@ class CustomerCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     ModTextFormField(
-                      textFieldController: nameController,
                       width: 55.w,
                       height: 5.h,
+                      hintFontSize: 14.sp,
+                      hintText:'${model['name']}',
                       onSubmit: (value) {},
                       validateTextField: (String? val) {},
                       inputColor: Colors.white,
@@ -477,9 +484,10 @@ class CustomerCard extends StatelessWidget {
                       textAlign: TextAlign.start,
                     ),
                     ModTextFormField(
-                      textFieldController: bankIdController,
+                      hintFontSize: 14.sp,
                       width: 55.w,
                       height: 5.h,
+                      hintText: '${model['bank_id']}',
                       onSubmit: (value) {},
                       validateTextField: (String? val) {},
                       inputColor: Colors.white,
@@ -500,7 +508,7 @@ class CustomerCard extends StatelessWidget {
                       width: 15.w,
                     ),
                     Text(
-                      '${money}\$',
+                      '${model['money']}\$',
                       style: TextStyle(
                         color: primaryColor,
                         fontSize: 14.sp,
@@ -531,3 +539,36 @@ class CustomerCard extends StatelessWidget {
     );
   }
 }
+
+Widget customersBuilder({
+  required List<Map> customers,
+})=>ConditionalBuilder(
+  condition: customers.length>0,
+  builder: (context)=>ListView.separated(
+    itemBuilder: (context,index)=>CustomerCard(function: (){
+      print('This Work');
+    },model:customers[index]),
+    separatorBuilder: (context,index)=>myDivider(),
+    itemCount: customers.length,
+  ),
+  fallback: (context)=>Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.menu,
+          size: 100,
+          color: Colors.grey,
+        ),
+        Text(
+          'No Customers Yet, Please Add Some Customers',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    ),
+  ),
+);
