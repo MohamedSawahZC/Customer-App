@@ -10,6 +10,10 @@ import '../../shared/cubit/cubit.dart';
 List<Map> cutsomers = [
   {'name': 'Mohamed Sawah', 'bank_id': "16513213213", 'money': "1230"},
   {'name': 'Mohamed Sawah', 'bank_id': "16513213213", 'money': "1230"},
+  {'name': 'Mohamed Sawah', 'bank_id': "16513213213", 'money': "1230"},
+  {'name': 'Mohamed Sawah', 'bank_id': "16513213213", 'money': "1230"},
+  {'name': 'Mohamed Sawah', 'bank_id': "16513213213", 'money': "1230"},
+
 ];
 
 class CustomersScreen extends StatelessWidget {
@@ -64,17 +68,7 @@ class CustomersScreen extends StatelessWidget {
               ),
             ],
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  customersBuilder(customers: cutsomers)
-                ],
-              ),
-            ),
-          ),
+          body: customersBuilder(customers: cutsomers),
         );
       },
     );

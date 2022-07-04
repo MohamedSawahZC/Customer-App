@@ -544,12 +544,15 @@ Widget customersBuilder({
   required List<Map> customers,
 })=>ConditionalBuilder(
   condition: customers.length>0,
-  builder: (context)=>ListView.separated(
-    itemBuilder: (context,index)=>CustomerCard(function: (){
-      print('This Work');
-    },model:customers[index]),
-    separatorBuilder: (context,index)=>myDivider(),
-    itemCount: customers.length,
+  builder: (context)=>Padding(
+    padding: EdgeInsets.all(20),
+    child: ListView.separated(
+      itemBuilder: (context,index)=>CustomerCard(function: (){
+        print('This Work');
+      },model:customers[index]),
+      separatorBuilder: (context,index)=>myDivider(),
+      itemCount: customers.length,
+    ),
   ),
   fallback: (context)=>Center(
     child: Column(
